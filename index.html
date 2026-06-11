@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Digital Sewa Kendra</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f3f4f6; }
+        .modal { display: none; }
+        .modal.active { display: flex; }
+        /* Custom scrollbar for modals */
+        .modal-content::-webkit-scrollbar { width: 6px; }
+        .modal-content::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <!-- LOGIN SCREEN -->
+    <div id="loginScreen" class="min-h-screen flex items-center justify-center bg-indigo-600 p-4">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-sm text-center">
+            <div class="mb-4">
+                <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <i class="fas fa-store text-3xl text-indigo-600"></i>
+                </div>
+                <h1 class="text-2xl font-bold text-indigo-700">Sewa Kendra</h1>
+                <p class="text-gray-400 text-sm">Enter PIN to login</p>
+            </div>
+            <input type="password" id="loginPin" maxlength="4" class="w-full text-center text-3xl tracking-[0.5em] border-2 border-gray-200 focus:border-indigo-500 outline-none rounded-xl p-3 mb-4 transition" placeholder="****">
+            <button onclick="checkLogin()" class="w-full bg-indigo-600 text-white py-3 rounded-xl font-bold hover:bg-indigo-700 transition shadow-lg">Unlock</button>
+            <p id="loginError" class="text-red-500 text-sm mt-3 hidden">Incorrect PIN. Try again.</p>
+        </div>
+    </div>
+
+    <!-- MAIN APP -->
+    <div id="appScreen" class="hidden min-h-screen pb-8">
+        <!-- Top Navbar -->
+        <nav class="bg-white border-b border-gray-200 p-4 shadow-sm sticky top-0 z-10">
+            <div class="max-w-4xl mx-auto flex justify-between items-center">
+                <h1 class="text-xl font-bold text-indigo-700 flex items-center gap-2">
+                    <i class="fas fa-store"></i> Sewa Kendra
+                </h1>
+                <button onclick="logout()" class="text-red-500 hover:text-red-700 font-medium text-sm flex items-center gap-1">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </nav>
+
+        <div class="max-w-4xl mx-auto p-4 mt-2">
+            <!-- Dashboard Cards -->
+            <div class="grid grid-cols-3 gap-3 mb-6">
+                <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 text-center">
+                    <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                        <i class="fas fa-rupee-sign text-green-600"></i>
+                    </div>
+                    <p class="text-xs text-gray-500 mb-1">Today's Earnings</p>
+                    <h3 class="text-lg font-bold text-green-600">₹<span id="todayEarnings">0</span></h3>
+                </div>
+                <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 text-center">
+                    <div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                        <i class="fas fa-tasks text-yellow-600"></i>
+                    </div>
+                    <p class="text-xs text-gray-500 mb-1">Pending Work</p>
+                    <h3 class="text-lg font-bold text-yellow-600"><span id="pendingCount">0</span></h3>
+                </div>
+                <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 text-center">
+                    <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                        <i class="fas fa-exclamation-circle text-red-600"></i>
+                    </div>
+                    <p class="text-xs text-gray-500 mb-1">Unpaid Dues</p>
+                    <h3 class="text-lg font-bold text-red-600">₹<span id="unpaidDues">0</span></h3>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex gap-3 mb-6">
+                <button onclick="openAddWorkModal()" class="flex-1 bg-indigo-600 text-white px-5 py-3 rounded-xl shadow-md hover:bg-indigo-700 transition font-semibold flex items-center justify-center gap-2">
+                    <i class="fas fa-plus-circle"></i> Add New Work
+                </button>
+                <button onclick="openDocTypeModal()" class="bg-white border border-gray-300 text-gray-700 px-4 py-3 rounded-xl shadow-sm hover:bg-gray-50 transition font-semibold flex items-center justify-center gap-2">
+                    <i class="fas fa-cog"></i> Doc Types
+                </button>
+            </div>
+
+            <!-- Work List Area -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="p-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
+                    <h2 class="font-bold text-gray-700"><i class="fas fa-list-alt text-indigo-500 mr-2"></i>Work Records</h2>
+                </div>
+                
+                <!-- Mobile-Friendly Cards View -->
+                <div id="workCardsContainer" class="divide-y divide-gray-100">
+                    <!-- Data injected by JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Add New Work -->
+    <div id="addWorkModal" class="modal fixed inset-0 bg-black bg-opacity-60 items-end md:items-center justify-center z-20">
+        <div class="modal-content bg-white rounded-t-3xl md:rounded-2xl shadow-2xl w-full md:max-w-md max-h-[90vh] overflow-y-auto p-6 relative">
+            <button onclick="closeModal('addWorkModal')" class="absolute top-4 right-4 w-8 h-8 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center text-gray-500"><i class="fas fa-times"></i></button>
+            <h2 class="text-xl font-bold mb-5 text-gray-800">Add New Work</h2>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 mb-1 uppercase">Customer Name</label>
+                    <input type="text" id="custName" class="w-full border border-gray-300 rounded-xl p-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition" placeholder="Enter Full Name">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 mb-1 uppercase">Mobile Number</label>
+                    <input type="tel" id="custPhone" class="w-full border border-gray-300 rounded-xl p-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition" placeholder="Enter 10-digit Number">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 mb-1 uppercase">Document Type</label>
+                    <div class="flex gap-2">
+                        <select id="docType" class="flex-1 border border-gray-300 rounded-xl p-3 focus:ring-2 focus:ring-indigo-500 outline-none bg-white transition">
+                            <!-- Options injected via JS -->
+                        </select>
+                        <button onclick="openDocTypeModal()" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-600 px-4 rounded-xl transition" title="Add New Type"><i class="fas fa-plus"></i></button>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 mb-1 uppercase">Amount (₹)</label>
+                        <input type="number" id="custAmount" class="w-full border border-gray-300 rounded-xl p-3 focus:ring-2 focus:ring-indigo-500 outline-none transition" placeholder="0">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 mb-1 uppercase">Payment Status</label>
+                        <select id="paymentStatus" class="w-full border border-gray-300 rounded-xl p-3 focus:ring-2 focus:ring-indigo-500 outline-none bg-white transition">
+                            <option value="Paid">Paid</option>
+                            <option value="Unpaid">Unpaid</option>
+                            <option value="Partial">Partial</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 mb-1 uppercase">Work Status</label>
+                    <select id="workStatus" class="w-full border border-gray-300 rounded-xl p-3 focus:ring-2 focus:ring-indigo-500 outline-none bg-white transition">
+                        <option value="Pending">Pending</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Ready">Ready for Delivery</option>
+                        <option value="Completed">Completed</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 mb-1 uppercase">Upload Photos (Optional)</label>
+                    <div class="w-full border-2 border-dashed border-gray-300 rounded-xl p-4 text-center hover:border-indigo-500 transition cursor-pointer">
+                        <i class="fas fa-cloud-upload-alt text-gray-400 text-2xl mb-1"></i>
+                        <input type="file" id="custPhotos" multiple class="hidden">
+                        <p class="text-sm text-gray-500">Click to Upload</p>
+                    </div>
+                </div>
+                <button onclick="saveWork()" class="w-full bg-indigo-600 text-white py-3.5 rounded-xl font-bold hover:bg-indigo-700 transition mt-2 shadow-md">
+                    <i class="fas fa-save mr-2"></i> Save Work
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Add Document Type -->
+    <div id="docTypeModal" class="modal fixed inset-0 bg-black bg-opacity-60 items-end md:items-center justify-center z-30 p-4">
+        <div class="modal-content bg-white rounded-t-3xl md:rounded-2xl shadow-2xl w-full md:max-w-sm max-h-[80vh] overflow-y-auto p-6 relative">
+            <button onclick="closeModal('docTypeModal')" class="absolute top-4 right-4 w-8 h-8 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center text-gray-500"><i class="fas fa-times"></i></button>
+            <h2 class="text-xl font-bold mb-5 text-gray-800">Manage Document Types</h2>
+            
+            <div class="flex gap-2 mb-4">
+                <input type="text" id="newDocTypeInput" class="flex-1 border border-gray-300 rounded-xl p-3 outline-none focus:border-indigo-500 transition" placeholder="New Doc Type (e.g. PAN Card)">
+                <button onclick="addDocType()" class="bg-green-500 text-white px-4 rounded-xl hover:bg-green-600 transition shadow-sm"><i class="fas fa-plus"></i></button>
+            </div>
+
+            <div id="docTypeList" class="space-y-2 max-h-60 overflow-y-auto border p-3 rounded-xl bg-gray-50">
+                <!-- List injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- DATA MANAGEMENT ---
+        const getDB = (key) => JSON.parse(localStorage.getItem(key)) || [];
+        const setDB = (key, data) => localStorage.setItem(key, JSON.stringify(data));
+
+        let docTypes = getDB('docTypes');
+        let workData = getDB('workData');
+        const APP_PIN = "1234"; // Default PIN
+
+        if(docTypes.length === 0) {
+            docTypes = ['Aadhar Card', 'PAN Card', 'Ration Card', 'Income Certificate', 'Domicile Certificate'];
+            setDB('docTypes', docTypes);
+        }
+
+        // File input visual trigger
+        const fileInput = document.getElementById('custPhotos');
+        fileInput.parentElement.addEventListener('click', () => fileInput.click());
+
+        // --- LOGIN LOGIC ---
+        function checkLogin() {
+            const pin = document.getElementById('loginPin').value;
+            if(pin === APP_PIN) {
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('appScreen').classList.remove('hidden');
+                renderAll();
+            } else {
+                document.getElementById('loginError').classList.remove('hidden');
+                document.getElementById('loginPin').value = '';
+                setTimeout(() => document.getElementById('loginError').classList.add('hidden'), 3000);
+            }
+        }
+
+        function logout() {
+            document.getElementById('appScreen').classList.add('hidden');
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('loginPin').value = '';
+        }
+
+        document.getElementById('loginPin').addEventListener('keypress', function(e) {
+            if(e.key === 'Enter') checkLogin();
+        });
+
+        // --- MODAL LOGIC ---
+        function openAddWorkModal() {
+            document.getElementById('addWorkModal').classList.add('active');
+            populateDocDropdown();
+        }
+
+        function openDocTypeModal() {
+            document.getElementById('docTypeModal').classList.add('active');
+            renderDocTypeList();
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        // --- DOCUMENT TYPE LOGIC ---
+        function renderDocTypeList() {
+            const list = document.getElementById('docTypeList');
+            list.innerHTML = '';
+            docTypes.forEach((type, index) => {
+                list.innerHTML += `<div class="flex justify-between items-center bg-white p-3 rounded-lg border border-gray-100 shadow-sm">
+                    <span class="text-gray-700 font-medium">${type}</span>
+                    <button onclick="deleteDocType(${index})" class="text-red-400 hover:text-red-600 w-8 h-8 flex items-center justify-center rounded-full hover:bg-red-50"><i class="fas fa-trash-alt"></i></button>
+                </div>`;
+            });
+        }
+
+        function addDocType() {
+            const input = document.getElementById('newDocTypeInput');
+            const newType = input.value.trim();
+            if(newType && !docTypes.includes(newType)) {
+                docTypes.push(newType);
+                setDB('docTypes', docTypes);
+                input.value = '';
+                renderDocTypeList();
+                populateDocDropdown();
+            } else if(docTypes.includes(newType)) {
+                alert("This document type already exists!");
+            }
+        }
+
+        function deleteDocType(index) {
+            if(confirm(`Are you sure you want to delete "${docTypes[index]}"?`)) {
+                docTypes.splice(index, 1);
+                setDB('docTypes', docTypes);
+                renderDocTypeList();
+                populateDocDropdown();
+            }
+        }
+
+        function populateDocDropdown() {
+            const select = document.getElementById('docType');
+            select.innerHTML = '';
+            docTypes.forEach(type => {
+                select.innerHTML += `<option value="${type}">${type}</option>`;
+            });
+        }
+
+        // --- WORK LOGIC ---
+        function saveWork() {
+            const name = document.getElementById('custName').value.trim();
+            const phone = document.getElementById('custPhone').value.trim();
+            const docType = document.getElementById('docType').value;
+            const amount = parseFloat(document.getElementById('custAmount').value) || 0;
+            const paymentStatus = document.getElementById('paymentStatus').value;
+            const workStatus = document.getElementById('workStatus').value;
+            
+            if(!name || !phone) {
+                alert("Please enter Customer Name and Phone Number!");
+                return;
+            }
+
+            const newWork = {
+                id: Date.now(),
+                name, phone, docType, amount, paymentStatus, workStatus,
+                date: new Date().toLocaleDateString('en-IN')
+            };
+
+            workData.unshift(newWork);
+            setDB('workData', workData);
+            
+            // Reset form
+            document.getElementById('custName').value = '';
+            document.getElementById('custPhone').value = '';
+            document.getElementById('custAmount').value = '';
+            document.getElementById('custPhotos').value = '';
+            document.getElementById('paymentStatus').value = 'Paid';
+            document.getElementById('workStatus').value = 'Pending';
+
+            closeModal('addWorkModal');
+            renderAll();
+        }
+
+        function updateWorkStatus(id, newStatus) {
+            const index = workData.findIndex(w => w.id === id);
+            if(index !== -1) {
+                workData[index].workStatus = newStatus;
+                setDB('workData', workData);
+                renderAll();
+            }
+        }
+
+        function deleteWork(id) {
+            if(confirm("Are you sure you want to delete this record?")) {
+                workData = workData.filter(w => w.id !== id);
+                setDB('workData', workData);
+                renderAll();
+            }
+        }
+
+        // --- RENDERING LOGIC ---
+        function renderAll() {
+            renderDashboard();
+            renderWorkCards();
+        }
+
+        function renderDashboard() {
+            const today = new Date().toLocaleDateString('en-IN');
+            let todayEarnings = 0;
+            let pendingCount = 0;
+            let unpaidDues = 0;
+
+            workData.forEach(w => {
+                if(w.date === today && (w.paymentStatus === 'Paid' || w.paymentStatus === 'Partial')) {
+                    todayEarnings += w.amount;
+                }
+                if(w.workStatus !== 'Completed') {
+                    pendingCount++;
+                }
+                if(w.paymentStatus === 'Unpaid') {
+                    unpaidDues += w.amount;
+                }
+            });
+
+            document.getElementById('todayEarnings').innerText = todayEarnings;
+            document.getElementById('pendingCount').innerText = pendingCount;
+            document.getElementById('unpaidDues').innerText = unpaidDues;
+        }
+
+        function renderWorkCards() {
+            const container = document.getElementById('workCardsContainer');
+            container.innerHTML = '';
+
+            if(workData.length === 0) {
+                container.innerHTML = `<div class="p-10 text-center text-gray-400">
+                    <i class="fas fa-folder-open text-4xl mb-3"></i>
+                    <p>No work records found.</p>
+                    <p class="text-sm">Click "Add New Work" to start!</p>
+                </div>`;
+                return;
+            }
+
+            workData.forEach(w => {
+                let statusColor = 'bg-yellow-100 text-yellow-700 border-yellow-200';
+                if(w.workStatus === 'In Progress') statusColor = 'bg-blue-100 text-blue-700 border-blue-200';
+                if(w.workStatus === 'Ready') statusColor = 'bg-purple-100 text-purple-700 border-purple-200';
+                if(w.workStatus === 'Completed') statusColor = 'bg-green-100 text-green-700 border-green-200';
+
+                let paymentBgColor = w.paymentStatus === 'Paid' ? 'bg-green-500' : (w.paymentStatus === 'Partial' ? 'bg-yellow-500' : 'bg-red-500');
+
+                container.innerHTML += `
+                <div class="p-4 hover:bg-gray-50 transition">
+                    <div class="flex justify-between items-start mb-3">
+                        <div>
+                            <h3 class="font-bold text-gray-800">${w.name}</h3>
+                            <p class="text-sm text-indigo-500 font-medium">${w.docType}</p>
+                        </div>
+                        <span class="text-xs font-bold px-2 py-1 rounded-full border ${statusColor}">${w.workStatus}</span>
+                    </div>
+                    
+                    <div class="flex justify-between items-center text-sm">
+                        <div class="flex items-center gap-3">
+                            <span class="text-gray-500"><i class="fas fa-calendar-alt mr-1"></i>${w.date}</span>
+                            <a href="tel:${w.phone}" class="text-gray-500 hover:text-indigo-600"><i class="fas fa-phone"></i></a>
+                            <a href="https://wa.me/91${w.phone}?text=Hello%20${w.name}%2C%20your%20${w.docType}%20work%20status%20is%20${w.workStatus}." target="_blank" class="text-green-500 hover:text-green-700"><i class="fab fa-whatsapp fa-lg"></i></a>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="font-bold text-gray-800">₹${w.amount}</span>
+                            <span class="w-2 h-2 rounded-full ${paymentBgColor}"></span>
+                        </div>
+                    </div>
+
+                    <div class="mt-3 pt-3 border-t border-gray-100 flex justify-between items-center">
+                        <select onchange="updateWorkStatus(${w.id}, this.value)" class="text-xs font-medium px-3 py-1.5 rounded-lg border border-gray-200 outline-none focus:border-indigo-400 cursor-pointer bg-white">
+                            <option ${w.workStatus === 'Pending' ? 'selected' : ''}>Pending</option>
+                            <option ${w.workStatus === 'In Progress' ? 'selected' : ''}>In Progress</option>
+                            <option ${w.workStatus === 'Ready' ? 'selected' : ''}>Ready</option>
+                            <option ${w.workStatus === 'Completed' ? 'selected' : ''}>Completed</option>
+                        </select>
+                        <button onclick="deleteWork(${w.id})" class="text-red-400 hover:text-red-600 text-sm px-2 py-1 hover:bg-red-50 rounded-lg transition"><i class="fas fa-trash-alt mr-1"></i> Delete</button>
+                    </div>
+                </div>`;
+            });
+        }
+    </script>
+</body>
+</html>
