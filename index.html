@@ -10,7 +10,6 @@
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f3f4f6; }
         .modal { display: none; }
         .modal.active { display: flex; }
-        /* Custom scrollbar for modals */
         .modal-content::-webkit-scrollbar { width: 6px; }
         .modal-content::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
     </style>
@@ -35,7 +34,6 @@
 
     <!-- MAIN APP -->
     <div id="appScreen" class="hidden min-h-screen pb-8">
-        <!-- Top Navbar -->
         <nav class="bg-white border-b border-gray-200 p-4 shadow-sm sticky top-0 z-10">
             <div class="max-w-4xl mx-auto flex justify-between items-center">
                 <h1 class="text-xl font-bold text-indigo-700 flex items-center gap-2">
@@ -48,51 +46,38 @@
         </nav>
 
         <div class="max-w-4xl mx-auto p-4 mt-2">
-            <!-- Dashboard Cards -->
             <div class="grid grid-cols-3 gap-3 mb-6">
                 <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 text-center">
-                    <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                        <i class="fas fa-rupee-sign text-green-600"></i>
-                    </div>
-                    <p class="text-xs text-gray-500 mb-1">Today's Earnings</p>
+                    <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2"><i class="fas fa-rupee-sign text-green-600"></i></div>
+                    <p class="text-xs text-gray-500 mb-1">Today</p>
                     <h3 class="text-lg font-bold text-green-600">₹<span id="todayEarnings">0</span></h3>
                 </div>
                 <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 text-center">
-                    <div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                        <i class="fas fa-tasks text-yellow-600"></i>
-                    </div>
-                    <p class="text-xs text-gray-500 mb-1">Pending Work</p>
+                    <div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-2"><i class="fas fa-tasks text-yellow-600"></i></div>
+                    <p class="text-xs text-gray-500 mb-1">Pending</p>
                     <h3 class="text-lg font-bold text-yellow-600"><span id="pendingCount">0</span></h3>
                 </div>
                 <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 text-center">
-                    <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                        <i class="fas fa-exclamation-circle text-red-600"></i>
-                    </div>
-                    <p class="text-xs text-gray-500 mb-1">Unpaid Dues</p>
+                    <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-2"><i class="fas fa-exclamation-circle text-red-600"></i></div>
+                    <p class="text-xs text-gray-500 mb-1">Unpaid</p>
                     <h3 class="text-lg font-bold text-red-600">₹<span id="unpaidDues">0</span></h3>
                 </div>
             </div>
 
-            <!-- Action Buttons -->
             <div class="flex gap-3 mb-6">
                 <button onclick="openAddWorkModal()" class="flex-1 bg-indigo-600 text-white px-5 py-3 rounded-xl shadow-md hover:bg-indigo-700 transition font-semibold flex items-center justify-center gap-2">
                     <i class="fas fa-plus-circle"></i> Add New Work
                 </button>
                 <button onclick="openDocTypeModal()" class="bg-white border border-gray-300 text-gray-700 px-4 py-3 rounded-xl shadow-sm hover:bg-gray-50 transition font-semibold flex items-center justify-center gap-2">
-                    <i class="fas fa-cog"></i> Doc Types
+                    <i class="fas fa-cog"></i>
                 </button>
             </div>
 
-            <!-- Work List Area -->
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                 <div class="p-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
                     <h2 class="font-bold text-gray-700"><i class="fas fa-list-alt text-indigo-500 mr-2"></i>Work Records</h2>
                 </div>
-                
-                <!-- Mobile-Friendly Cards View -->
-                <div id="workCardsContainer" class="divide-y divide-gray-100">
-                    <!-- Data injected by JS -->
-                </div>
+                <div id="workCardsContainer" class="divide-y divide-gray-100"></div>
             </div>
         </div>
     </div>
@@ -106,19 +91,17 @@
             <div class="space-y-4">
                 <div>
                     <label class="block text-xs font-semibold text-gray-500 mb-1 uppercase">Customer Name</label>
-                    <input type="text" id="custName" class="w-full border border-gray-300 rounded-xl p-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition" placeholder="Enter Full Name">
+                    <input type="text" id="custName" class="w-full border border-gray-300 rounded-xl p-3 focus:ring-2 focus:ring-indigo-500 outline-none transition" placeholder="Enter Full Name">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-gray-500 mb-1 uppercase">Mobile Number</label>
-                    <input type="tel" id="custPhone" class="w-full border border-gray-300 rounded-xl p-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition" placeholder="Enter 10-digit Number">
+                    <input type="tel" id="custPhone" class="w-full border border-gray-300 rounded-xl p-3 focus:ring-2 focus:ring-indigo-500 outline-none transition" placeholder="Enter 10-digit Number">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-gray-500 mb-1 uppercase">Document Type</label>
                     <div class="flex gap-2">
-                        <select id="docType" class="flex-1 border border-gray-300 rounded-xl p-3 focus:ring-2 focus:ring-indigo-500 outline-none bg-white transition">
-                            <!-- Options injected via JS -->
-                        </select>
-                        <button onclick="openDocTypeModal()" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-600 px-4 rounded-xl transition" title="Add New Type"><i class="fas fa-plus"></i></button>
+                        <select id="docType" class="flex-1 border border-gray-300 rounded-xl p-3 focus:ring-2 focus:ring-indigo-500 outline-none bg-white transition"></select>
+                        <button onclick="openDocTypeModal()" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-600 px-4 rounded-xl transition"><i class="fas fa-plus"></i></button>
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
@@ -127,7 +110,7 @@
                         <input type="number" id="custAmount" class="w-full border border-gray-300 rounded-xl p-3 focus:ring-2 focus:ring-indigo-500 outline-none transition" placeholder="0">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-500 mb-1 uppercase">Payment Status</label>
+                        <label class="block text-xs font-semibold text-gray-500 mb-1 uppercase">Payment</label>
                         <select id="paymentStatus" class="w-full border border-gray-300 rounded-xl p-3 focus:ring-2 focus:ring-indigo-500 outline-none bg-white transition">
                             <option value="Paid">Paid</option>
                             <option value="Unpaid">Unpaid</option>
@@ -145,16 +128,24 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-gray-500 mb-1 uppercase">Upload Photos (Optional)</label>
-                    <div class="w-full border-2 border-dashed border-gray-300 rounded-xl p-4 text-center hover:border-indigo-500 transition cursor-pointer">
-                        <i class="fas fa-cloud-upload-alt text-gray-400 text-2xl mb-1"></i>
-                        <input type="file" id="custPhotos" multiple class="hidden">
-                        <p class="text-sm text-gray-500">Click to Upload</p>
-                    </div>
+                    <label class="block text-xs font-semibold text-gray-500 mb-1 uppercase">Upload Photos (Multiple allowed)</label>
+                    <p class="text-xs text-red-400 mb-2">Note: App has limited storage. Keep photos small/low-res.</p>
+                    <input type="file" id="custPhotos" multiple accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-600 hover:file:bg-indigo-100 border border-gray-300 rounded-xl cursor-pointer">
                 </div>
-                <button onclick="saveWork()" class="w-full bg-indigo-600 text-white py-3.5 rounded-xl font-bold hover:bg-indigo-700 transition mt-2 shadow-md">
-                    <i class="fas fa-save mr-2"></i> Save Work
+                <button onclick="saveWork()" id="saveWorkBtn" class="w-full bg-indigo-600 text-white py-3.5 rounded-xl font-bold hover:bg-indigo-700 transition mt-2 shadow-md flex items-center justify-center gap-2">
+                    <i class="fas fa-save"></i> Save Work
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: View Work Details & Photos -->
+    <div id="viewWorkModal" class="modal fixed inset-0 bg-black bg-opacity-60 items-end md:items-center justify-center z-20">
+        <div class="modal-content bg-white rounded-t-3xl md:rounded-2xl shadow-2xl w-full md:max-w-md max-h-[90vh] overflow-y-auto p-6 relative">
+            <button onclick="closeModal('viewWorkModal')" class="absolute top-4 right-4 w-8 h-8 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center text-gray-500 z-10"><i class="fas fa-times"></i></button>
+            
+            <div id="viewWorkContent">
+                <!-- Injected dynamically -->
             </div>
         </div>
     </div>
@@ -164,15 +155,11 @@
         <div class="modal-content bg-white rounded-t-3xl md:rounded-2xl shadow-2xl w-full md:max-w-sm max-h-[80vh] overflow-y-auto p-6 relative">
             <button onclick="closeModal('docTypeModal')" class="absolute top-4 right-4 w-8 h-8 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center text-gray-500"><i class="fas fa-times"></i></button>
             <h2 class="text-xl font-bold mb-5 text-gray-800">Manage Document Types</h2>
-            
             <div class="flex gap-2 mb-4">
-                <input type="text" id="newDocTypeInput" class="flex-1 border border-gray-300 rounded-xl p-3 outline-none focus:border-indigo-500 transition" placeholder="New Doc Type (e.g. PAN Card)">
+                <input type="text" id="newDocTypeInput" class="flex-1 border border-gray-300 rounded-xl p-3 outline-none focus:border-indigo-500 transition" placeholder="New Doc Type">
                 <button onclick="addDocType()" class="bg-green-500 text-white px-4 rounded-xl hover:bg-green-600 transition shadow-sm"><i class="fas fa-plus"></i></button>
             </div>
-
-            <div id="docTypeList" class="space-y-2 max-h-60 overflow-y-auto border p-3 rounded-xl bg-gray-50">
-                <!-- List injected via JS -->
-            </div>
+            <div id="docTypeList" class="space-y-2 max-h-60 overflow-y-auto border p-3 rounded-xl bg-gray-50"></div>
         </div>
     </div>
 
@@ -183,16 +170,12 @@
 
         let docTypes = getDB('docTypes');
         let workData = getDB('workData');
-        const APP_PIN = "1234"; // Default PIN
+        const APP_PIN = "1234"; 
 
         if(docTypes.length === 0) {
             docTypes = ['Aadhar Card', 'PAN Card', 'Ration Card', 'Income Certificate', 'Domicile Certificate'];
             setDB('docTypes', docTypes);
         }
-
-        // File input visual trigger
-        const fileInput = document.getElementById('custPhotos');
-        fileInput.parentElement.addEventListener('click', () => fileInput.click());
 
         // --- LOGIN LOGIC ---
         function checkLogin() {
@@ -229,9 +212,7 @@
             renderDocTypeList();
         }
 
-        function closeModal(id) {
-            document.getElementById(id).classList.remove('active');
-        }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
 
         // --- DOCUMENT TYPE LOGIC ---
         function renderDocTypeList() {
@@ -254,13 +235,11 @@
                 input.value = '';
                 renderDocTypeList();
                 populateDocDropdown();
-            } else if(docTypes.includes(newType)) {
-                alert("This document type already exists!");
-            }
+            } else if(docTypes.includes(newType)) { alert("This type already exists!"); }
         }
 
         function deleteDocType(index) {
-            if(confirm(`Are you sure you want to delete "${docTypes[index]}"?`)) {
+            if(confirm(`Delete "${docTypes[index]}"?`)) {
                 docTypes.splice(index, 1);
                 setDB('docTypes', docTypes);
                 renderDocTypeList();
@@ -271,44 +250,85 @@
         function populateDocDropdown() {
             const select = document.getElementById('docType');
             select.innerHTML = '';
-            docTypes.forEach(type => {
-                select.innerHTML += `<option value="${type}">${type}</option>`;
+            docTypes.forEach(type => { select.innerHTML += `<option value="${type}">${type}</option>`; });
+        }
+
+        // --- IMAGE COMPRESSION & WORK LOGIC ---
+        function compressImage(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        const canvas = document.createElement('canvas');
+                        const maxWidth = 800; // Max width in pixels to save local storage
+                        const ratio = maxWidth / img.width;
+                        canvas.width = maxWidth;
+                        canvas.height = img.height * ratio;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        // Compress to 70% quality JPEG
+                        resolve(canvas.toDataURL('image/jpeg', 0.7)); 
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
             });
         }
 
-        // --- WORK LOGIC ---
-        function saveWork() {
+        async function saveWork() {
             const name = document.getElementById('custName').value.trim();
             const phone = document.getElementById('custPhone').value.trim();
             const docType = document.getElementById('docType').value;
             const amount = parseFloat(document.getElementById('custAmount').value) || 0;
             const paymentStatus = document.getElementById('paymentStatus').value;
             const workStatus = document.getElementById('workStatus').value;
+            const files = document.getElementById('custPhotos').files;
             
             if(!name || !phone) {
                 alert("Please enter Customer Name and Phone Number!");
                 return;
             }
 
-            const newWork = {
-                id: Date.now(),
-                name, phone, docType, amount, paymentStatus, workStatus,
-                date: new Date().toLocaleDateString('en-IN')
-            };
+            // Show loading state
+            const btn = document.getElementById('saveWorkBtn');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+            btn.disabled = true;
 
-            workData.unshift(newWork);
-            setDB('workData', workData);
-            
-            // Reset form
-            document.getElementById('custName').value = '';
-            document.getElementById('custPhone').value = '';
-            document.getElementById('custAmount').value = '';
-            document.getElementById('custPhotos').value = '';
-            document.getElementById('paymentStatus').value = 'Paid';
-            document.getElementById('workStatus').value = 'Pending';
+            let imagesBase64 = [];
+            try {
+                for (let i = 0; i < files.length; i++) {
+                    const compressed = await compressImage(files[i]);
+                    imagesBase64.push(compressed);
+                }
 
-            closeModal('addWorkModal');
-            renderAll();
+                const newWork = {
+                    id: Date.now(),
+                    name, phone, docType, amount, paymentStatus, workStatus,
+                    images: imagesBase64,
+                    date: new Date().toLocaleDateString('en-IN')
+                };
+
+                workData.unshift(newWork);
+                setDB('workData', workData);
+                
+                // Reset form
+                document.getElementById('custName').value = '';
+                document.getElementById('custPhone').value = '';
+                document.getElementById('custAmount').value = '';
+                document.getElementById('custPhotos').value = '';
+                document.getElementById('paymentStatus').value = 'Paid';
+                document.getElementById('workStatus').value = 'Pending';
+
+                closeModal('addWorkModal');
+                renderAll();
+            } catch (error) {
+                alert("Error saving images! They might be too large. Try smaller images.");
+                console.error(error);
+            } finally {
+                btn.innerHTML = '<i class="fas fa-save"></i> Save Work';
+                btn.disabled = false;
+            }
         }
 
         function updateWorkStatus(id, newStatus) {
@@ -325,6 +345,7 @@
                 workData = workData.filter(w => w.id !== id);
                 setDB('workData', workData);
                 renderAll();
+                closeModal('viewWorkModal');
             }
         }
 
@@ -336,20 +357,12 @@
 
         function renderDashboard() {
             const today = new Date().toLocaleDateString('en-IN');
-            let todayEarnings = 0;
-            let pendingCount = 0;
-            let unpaidDues = 0;
+            let todayEarnings = 0, pendingCount = 0, unpaidDues = 0;
 
             workData.forEach(w => {
-                if(w.date === today && (w.paymentStatus === 'Paid' || w.paymentStatus === 'Partial')) {
-                    todayEarnings += w.amount;
-                }
-                if(w.workStatus !== 'Completed') {
-                    pendingCount++;
-                }
-                if(w.paymentStatus === 'Unpaid') {
-                    unpaidDues += w.amount;
-                }
+                if(w.date === today && (w.paymentStatus === 'Paid' || w.paymentStatus === 'Partial')) todayEarnings += w.amount;
+                if(w.workStatus !== 'Completed') pendingCount++;
+                if(w.paymentStatus === 'Unpaid') unpaidDues += w.amount;
             });
 
             document.getElementById('todayEarnings').innerText = todayEarnings;
@@ -363,9 +376,7 @@
 
             if(workData.length === 0) {
                 container.innerHTML = `<div class="p-10 text-center text-gray-400">
-                    <i class="fas fa-folder-open text-4xl mb-3"></i>
-                    <p>No work records found.</p>
-                    <p class="text-sm">Click "Add New Work" to start!</p>
+                    <i class="fas fa-folder-open text-4xl mb-3"></i><p>No work records found.</p>
                 </div>`;
                 return;
             }
@@ -377,40 +388,109 @@
                 if(w.workStatus === 'Completed') statusColor = 'bg-green-100 text-green-700 border-green-200';
 
                 let paymentBgColor = w.paymentStatus === 'Paid' ? 'bg-green-500' : (w.paymentStatus === 'Partial' ? 'bg-yellow-500' : 'bg-red-500');
+                
+                let hasImages = w.images && w.images.length > 0;
 
                 container.innerHTML += `
-                <div class="p-4 hover:bg-gray-50 transition">
-                    <div class="flex justify-between items-start mb-3">
+                <div class="p-4 hover:bg-gray-50 transition cursor-pointer" onclick="viewWork(${w.id})">
+                    <div class="flex justify-between items-start mb-2">
                         <div>
-                            <h3 class="font-bold text-gray-800">${w.name}</h3>
+                            <h3 class="font-bold text-gray-800 flex items-center gap-2">
+                                ${w.name} 
+                                ${hasImages ? '<span class="text-indigo-400 text-sm"><i class="fas fa-paperclip"></i></span>' : ''}
+                            </h3>
                             <p class="text-sm text-indigo-500 font-medium">${w.docType}</p>
                         </div>
                         <span class="text-xs font-bold px-2 py-1 rounded-full border ${statusColor}">${w.workStatus}</span>
                     </div>
-                    
                     <div class="flex justify-between items-center text-sm">
                         <div class="flex items-center gap-3">
-                            <span class="text-gray-500"><i class="fas fa-calendar-alt mr-1"></i>${w.date}</span>
-                            <a href="tel:${w.phone}" class="text-gray-500 hover:text-indigo-600"><i class="fas fa-phone"></i></a>
-                            <a href="https://wa.me/91${w.phone}?text=Hello%20${w.name}%2C%20your%20${w.docType}%20work%20status%20is%20${w.workStatus}." target="_blank" class="text-green-500 hover:text-green-700"><i class="fab fa-whatsapp fa-lg"></i></a>
+                            <span class="text-gray-400 text-xs"><i class="fas fa-calendar-alt mr-1"></i>${w.date}</span>
                         </div>
                         <div class="flex items-center gap-2">
                             <span class="font-bold text-gray-800">₹${w.amount}</span>
                             <span class="w-2 h-2 rounded-full ${paymentBgColor}"></span>
                         </div>
                     </div>
-
-                    <div class="mt-3 pt-3 border-t border-gray-100 flex justify-between items-center">
-                        <select onchange="updateWorkStatus(${w.id}, this.value)" class="text-xs font-medium px-3 py-1.5 rounded-lg border border-gray-200 outline-none focus:border-indigo-400 cursor-pointer bg-white">
-                            <option ${w.workStatus === 'Pending' ? 'selected' : ''}>Pending</option>
-                            <option ${w.workStatus === 'In Progress' ? 'selected' : ''}>In Progress</option>
-                            <option ${w.workStatus === 'Ready' ? 'selected' : ''}>Ready</option>
-                            <option ${w.workStatus === 'Completed' ? 'selected' : ''}>Completed</option>
-                        </select>
-                        <button onclick="deleteWork(${w.id})" class="text-red-400 hover:text-red-600 text-sm px-2 py-1 hover:bg-red-50 rounded-lg transition"><i class="fas fa-trash-alt mr-1"></i> Delete</button>
-                    </div>
                 </div>`;
             });
+        }
+
+        // --- VIEW WORK DETAIL LOGIC ---
+        function viewWork(id) {
+            const w = workData.find(w => w.id === id);
+            if(!w) return;
+
+            let paymentColor = w.paymentStatus === 'Paid' ? 'text-green-600' : (w.paymentStatus === 'Partial' ? 'text-yellow-600' : 'text-red-600');
+            let statusColor = 'bg-yellow-100 text-yellow-700';
+            if(w.workStatus === 'In Progress') statusColor = 'bg-blue-100 text-blue-700';
+            if(w.workStatus === 'Ready') statusColor = 'bg-purple-100 text-purple-700';
+            if(w.workStatus === 'Completed') statusColor = 'bg-green-100 text-green-700';
+
+            let imagesHtml = '';
+            if(w.images && w.images.length > 0) {
+                imagesHtml = `<div class="mt-4">
+                    <h4 class="font-bold text-gray-700 mb-2"><i class="fas fa-images text-indigo-500 mr-2"></i>Uploaded Documents</h4>
+                    <div class="grid grid-cols-2 gap-3">`;
+                w.images.forEach((imgSrc, index) => {
+                    imagesHtml += `
+                    <div class="relative border border-gray-200 rounded-xl overflow-hidden shadow-sm bg-gray-50">
+                        <a href="${imgSrc}" target="_blank" title="Click to view full size / Right click to download">
+                            <img src="${imgSrc}" class="w-full h-32 object-cover">
+                        </a>
+                        <a href="${imgSrc}" download="${w.name}_doc_${index+1}.jpg" class="absolute bottom-2 right-2 bg-white bg-opacity-80 hover:bg-opacity-100 text-gray-700 w-8 h-8 flex items-center justify-center rounded-full shadow-md transition">
+                            <i class="fas fa-download text-sm"></i>
+                        </a>
+                    </div>`;
+                });
+                imagesHtml += `</div></div>`;
+            } else {
+                imagesHtml = `<div class="mt-4 text-center text-gray-400 text-sm py-4 bg-gray-50 rounded-xl"><i class="fas fa-camera mr-1"></i> No photos uploaded for this work.</div>`;
+            }
+
+            const content = `
+                <h2 class="text-xl font-bold mb-1 text-gray-800 pr-8">${w.name}</h2>
+                <p class="text-sm text-indigo-500 font-semibold mb-4">${w.docType}</p>
+
+                <div class="grid grid-cols-2 gap-4 mb-4 bg-gray-50 p-3 rounded-xl">
+                    <div>
+                        <p class="text-xs text-gray-400 font-semibold uppercase">Amount</p>
+                        <p class="font-bold text-gray-800">₹${w.amount}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-400 font-semibold uppercase">Payment</p>
+                        <p class="font-bold ${paymentColor}">${w.paymentStatus}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-400 font-semibold uppercase">Date</p>
+                        <p class="font-medium text-gray-700">${w.date}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-400 font-semibold uppercase">Status</p>
+                        <span class="text-xs font-bold px-2 py-1 rounded-full ${statusColor}">${w.workStatus}</span>
+                    </div>
+                </div>
+
+                <div class="flex gap-3 mb-4">
+                    <a href="tel:${w.phone}" class="flex-1 bg-gray-100 text-gray-700 py-2 rounded-xl text-center font-medium hover:bg-gray-200 transition text-sm"><i class="fas fa-phone mr-1"></i> Call</a>
+                    <a href="https://wa.me/91${w.phone}?text=Hello%20${w.name}%2C%20your%20${w.docType}%20work%20status%20is%20${w.workStatus}." target="_blank" class="flex-1 bg-green-50 text-green-700 py-2 rounded-xl text-center font-medium hover:bg-green-100 transition text-sm"><i class="fab fa-whatsapp mr-1"></i> WhatsApp</a>
+                </div>
+
+                ${imagesHtml}
+
+                <div class="mt-6 flex gap-3">
+                    <select onchange="updateWorkStatus(${w.id}, this.value); viewWork(${w.id});" class="flex-1 text-sm font-medium px-3 py-2.5 rounded-xl border border-gray-200 outline-none focus:border-indigo-400 cursor-pointer bg-white">
+                        <option ${w.workStatus === 'Pending' ? 'selected' : ''}>Pending</option>
+                        <option ${w.workStatus === 'In Progress' ? 'selected' : ''}>In Progress</option>
+                        <option ${w.workStatus === 'Ready' ? 'selected' : ''}>Ready</option>
+                        <option ${w.workStatus === 'Completed' ? 'selected' : ''}>Completed</option>
+                    </select>
+                    <button onclick="deleteWork(${w.id})" class="bg-red-50 text-red-600 px-4 py-2.5 rounded-xl font-medium hover:bg-red-100 transition text-sm"><i class="fas fa-trash-alt mr-1"></i> Delete</button>
+                </div>
+            `;
+
+            document.getElementById('viewWorkContent').innerHTML = content;
+            document.getElementById('viewWorkModal').classList.add('active');
         }
     </script>
 </body>
